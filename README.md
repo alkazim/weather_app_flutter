@@ -1,16 +1,42 @@
-# weather_app
+## Weather App (Flutter)
 
-A new Flutter project.
+A simple weather application built using Flutter that allows users to search for a city and view real-time weather details.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+##  Features
+- Search weather by city name  
+- Displays temperature, condition, humidity, and wind speed  
+- Handles loading and error states  
+- Clean and responsive UI  
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+##  Tech Stack
+- Flutter  
+- Provider (State Management)  
+- OpenWeather API  
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+##  Project Structure
+lib/
+├── screens/
+├── providers/
+├── services/
+
+##  How to Run
+
+1. Clone the repository  
+2. Run:
+
+flutter pub get
+
+3. Add your API key in:
+
+weather_service.dart
+
+4. Run the app:
+
+flutter run
+
+##  API Used
+OpenWeatherMap API  
+https://openweathermap.org/api
