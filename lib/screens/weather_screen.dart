@@ -35,78 +35,84 @@ class _WeatherScreenState extends State<WeatherScreen> {
           ),
         ),
         child: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 500),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
+          child: Column(
+            children: [
+
+              // 🔹 HEADER (FULL WIDTH)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
                   children: [
-
-                    // 🔙 Back + Title
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
-                        ),
-                        const Text(
-                          "Weather",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
                     ),
-
-                    const SizedBox(height: 30),
-
-                    Expanded(
-                      child: Center(
-                        child: provider.isLoading
-                            ? const CircularProgressIndicator()
-
-                            : provider.error != null
-                                ? Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(Icons.error,
-                                          color: Colors.white, size: 60),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        provider.error!,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Provider.of<WeatherProvider>(context,
-                                                  listen: false)
-                                              .fetchWeather(widget.city);
-                                        },
-                                        child: const Text("Retry"),
-                                      ),
-                                    ],
-                                  )
-
-                                : _buildWeatherUI(provider.weatherData!),
+                    const SizedBox(width: 8),
+                    const Text(
+                      "Weather",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
+
+              const SizedBox(height: 10),
+
+              // 🔹 BODY (CENTERED RESPONSIVE)
+              Expanded(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: _buildContent(provider),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildWeatherUI(Map<String, dynamic> data) {
+  Widget _buildContent(WeatherProvider provider) {
+
+    // 🔄 Loading
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // ❌ Error
+    if (provider.error != null) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.error, color: Colors.white, size: 60),
+          const SizedBox(height: 10),
+          Text(
+            provider.error!,
+            style: const TextStyle(color: Colors.white),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              provider.fetchWeather(widget.city);
+            },
+            child: const Text("Retry"),
+          ),
+        ],
+      );
+    }
+
+    // ✅ Data
+    final data = provider.weatherData!;
+
     String cityName = data['name'];
     double temp = data['main']['temp'];
     int humidity = data['main']['humidity'];
@@ -122,6 +128,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+
           Text(
             cityName,
             style: const TextStyle(
