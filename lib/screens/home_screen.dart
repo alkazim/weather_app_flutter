@@ -21,15 +21,17 @@ class _HomeScreenState extends State<HomeScreen> {
     String city = cityController.text.trim();
 
     if (city.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Please enter a city")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter a city")),
+      );
       return;
     }
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => WeatherScreen(city: city)),
+      MaterialPageRoute(
+        builder: (context) => WeatherScreen(city: city),
+      ),
     );
   }
 
@@ -40,8 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF4facfe), Color(0xFF00f2fe)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
           ),
         ),
         child: SafeArea(
@@ -83,19 +83,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 20),
-
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: searchCity,
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
                           child: const Text("Search"),
                         ),
                       ),
