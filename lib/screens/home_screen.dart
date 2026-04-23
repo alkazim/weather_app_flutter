@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const WeatherScreen()),
+      MaterialPageRoute(builder: (context) => WeatherScreen(city: city)),
     );
   }
 
@@ -51,9 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.cloud, size: 80, color: Colors.white),
-
                 const SizedBox(height: 10),
-
                 const Text(
                   "Weather App",
                   style: TextStyle(
@@ -62,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.white,
                   ),
                 ),
-
                 const SizedBox(height: 30),
 
                 Container(
@@ -94,7 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: ElevatedButton(
                           onPressed: searchCity,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),

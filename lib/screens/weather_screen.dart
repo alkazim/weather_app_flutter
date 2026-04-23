@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/services/weather_service.dart';
 
 class WeatherScreen extends StatelessWidget {
-  const WeatherScreen({super.key});
+  final String city;
+
+  const WeatherScreen({super.key, required this.city});
 
   @override
   Widget build(BuildContext context) {
-    String city = "Kochi";
-    String temp = "30°C";
-    String condition = "Clouds";
-    String icon = "03n";
-    String humidity = "77%";
-    String wind = "3.3 m/s";
+    final WeatherService service = WeatherService();
 
     return Scaffold(
       body: Container(
@@ -22,110 +20,140 @@ class WeatherScreen extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
+          child: FutureBuilder(
+            future: service.getWeather(city),
+            builder: (context, snapshot) {
 
-                // 🔙 Back Button + Title
-                Row(
+              // 🔄 Loading
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              // ❌ Error
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    snapshot.error.toString(),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                );
+              }
+
+              // ✅ Data
+              final data = snapshot.data!;
+
+              String cityName = data['name'];
+              double temp = data['main']['temp'];
+              int humidity = data['main']['humidity'];
+              String condition = data['weather'][0]['main'];
+              String icon = data['weather'][0]['icon'];
+              double wind = data['wind']['speed'];
+
+              return Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+
+                    // Back button
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          "Weather",
+                          style: TextStyle(
+                            fontSize: 22,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      "Weather",
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
 
-                const SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
-                // 🔥 Main Card
-                Expanded(
-                  child: Center(
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-
-                          Text(
-                            city,
-                            style: const TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    Expanded(
+                      child: Center(
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
                           ),
-
-                          const SizedBox(height: 10),
-
-                          Image.network(
-                            "https://openweathermap.org/img/wn/$icon@2x.png",
-                            height: 100,
-                          ),
-
-                          const SizedBox(height: 10),
-
-                          Text(
-                            temp,
-                            style: const TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-
-                          const SizedBox(height: 5),
-
-                          Text(
-                            condition,
-                            style: const TextStyle(fontSize: 18),
-                          ),
-
-                          const SizedBox(height: 25),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Column(
-                                children: [
-                                  const Icon(Icons.water_drop, color: Colors.blue),
-                                  const SizedBox(height: 5),
-                                  const Text("Humidity"),
-                                  Text(humidity),
-                                ],
+
+                              Text(
+                                cityName,
+                                style: const TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              Column(
+
+                              const SizedBox(height: 10),
+
+                              Image.network(
+                                "https://openweathermap.org/img/wn/$icon@2x.png",
+                                height: 100,
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              Text(
+                                "${temp.toStringAsFixed(1)}°C",
+                                style: const TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                              const SizedBox(height: 5),
+
+                              Text(
+                                condition,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+
+                              const SizedBox(height: 25),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
-                                  const Icon(Icons.air, color: Colors.blue),
-                                  const SizedBox(height: 5),
-                                  const Text("Wind"),
-                                  Text(wind),
+                                  Column(
+                                    children: [
+                                      const Icon(Icons.water_drop, color: Colors.blue),
+                                      const SizedBox(height: 5),
+                                      const Text("Humidity"),
+                                      Text("$humidity%"),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      const Icon(Icons.air, color: Colors.blue),
+                                      const SizedBox(height: 5),
+                                      const Text("Wind"),
+                                      Text("$wind m/s"),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
