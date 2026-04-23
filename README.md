@@ -25,17 +25,9 @@ lib/
 ##  How to Run
 
 1. Clone the repository  
-2. Run:
-
-flutter pub get
-
-3. Add your API key in:
-
-weather_service.dart
-
-4. Run the app:
-
-flutter run
+2. Run: flutter pub get
+3. Add your API key in : weather_service.dart
+4. Run the app:flutter run
 
 ##  API Used
 OpenWeatherMap API  
